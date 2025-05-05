@@ -126,10 +126,7 @@
     - name: _process_vm | Initialize VM Variables
       debug:
         msg: "Initializing VM variables for processing"
-      loop:
-        - vm-web-02
-        - vm-app-02
-        - vm-db-02
+      loop: "{{ vms }}"
       loop_control:
         loop_var: vm_name
         index_var: vm_idx
@@ -138,7 +135,7 @@
     - name: _process_vm | Verify Name or ID or Path specified for VM
       debug:
         msg: "Verifying VM identification properties"
-      loop: vms
+      loop: "{{ vms }}"
       loop_control:
         loop_var: vm_name
         index_var: vm_idx
@@ -147,28 +144,28 @@
     - name: _process_vm | Locate VM by name
       debug:
         msg: "Locating VM '{{ item }}' by name"
-      loop: vms
+      loop: "{{ vms }}"
       loop_control:
         label: "VM {{ item }}"
         
     - name: _process_vm | Verify single VM found
       debug:
         msg: "Verifying that a single VM was found"
-      loop: vms
+      loop: "{{ vms }}"
       loop_control:
         label: "VM {{ item }}"
         
     - name: _process_vm | Set VM to Process
       debug:
         msg: "Setting VM to process in migration"
-      loop: vms
+      loop: "{{ vms }}"
       loop_control:
         label: "VM {{ item }}"
         
     - name: _process_vm | Add VM to Migration Dict
       debug:
         msg: "Adding VM '{{ item }}' to migration dictionary"
-      loop: vms
+      loop: "{{ vms }}"
       loop_control:
         label: "VM {{ item }}"
         
