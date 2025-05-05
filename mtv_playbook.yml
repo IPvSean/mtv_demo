@@ -138,10 +138,7 @@
     - name: _process_vm | Verify Name or ID or Path specified for VM
       debug:
         msg: "Verifying VM identification properties"
-      loop:
-        - vm-web-02
-        - vm-app-02
-        - vm-db-02
+      loop: vms
       loop_control:
         loop_var: vm_name
         index_var: vm_idx
@@ -150,40 +147,28 @@
     - name: _process_vm | Locate VM by name
       debug:
         msg: "Locating VM '{{ item }}' by name"
-      loop:
-        - vm-web-01
-        - vm-db-01
-        - vm-app-01
+      loop: vms
       loop_control:
         label: "VM {{ item }}"
         
     - name: _process_vm | Verify single VM found
       debug:
         msg: "Verifying that a single VM was found"
-      loop:
-        - vm-web-01
-        - vm-db-01
-        - vm-app-01
+      loop: vms
       loop_control:
         label: "VM {{ item }}"
         
     - name: _process_vm | Set VM to Process
       debug:
         msg: "Setting VM to process in migration"
-      loop:
-        - vm-web-01
-        - vm-db-01
-        - vm-app-01
+      loop: vms
       loop_control:
         label: "VM {{ item }}"
         
     - name: _process_vm | Add VM to Migration Dict
       debug:
         msg: "Adding VM '{{ item }}' to migration dictionary"
-      loop:
-        - vm-web-01
-        - vm-db-01
-        - vm-app-01
+      loop: vms
       loop_control:
         label: "VM {{ item }}"
         
@@ -254,9 +239,7 @@
       debug:
         msg: |
           Migration of VMs completed successfully:
-            - vm-web-01
-            - vm-db-01
-            - vm-app-01
+            - {{ vms }}
           
           Plan Name: {{ mtv_migrate_migration_request.plan_name }}
           Source: {{ mtv_migrate_migration_request.source }} ({{ mtv_migrate_migration_request.source_type }})
