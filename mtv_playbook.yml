@@ -1,0 +1,263 @@
+---
+- name: Test MTV Migration Demo
+  hosts: localhost
+  gather_facts: false
+  vars:
+    mtv_migrate_migration_request:
+      mtv_namespace: openshift-mtv
+      source_type: vsphere
+      source: vmware
+      source_namespace: openshift-mtv
+      destination_type: openshift
+      destination: host
+      destination_namespace: openshift-mtv
+      plan_name: vmware-host-20250505-demo
+      network_map: vmware-host
+      network_map_namespace: openshift-mtv
+      storage_map: vmware-host
+      storage_map_namespace: openshift-mtv
+      target_namespace: openshift-mtv
+      vms_per_plan: 10
+      split_plans: false
+      start_migration: true
+      verify_plans_ready: true
+      verify_migrations_complete: true
+      vms:
+        - name: winweb02
+        - name: winweb01
+        - name: database
+        - name: haproxy
+      folders:
+        - name: "/Datacenter/vm/Production"
+
+  tasks:
+    - name: Verify Request Provided
+      debug:
+        msg: "Verifying that mtv_migrate_migration_request variable is provided and valid"
+      
+    - name: Initialize Data Structures
+      debug:
+        msg: "Initializing data structures for migration"
+        
+    - name: Process Request (MTV Namespace)
+      debug:
+        msg: "Setting MTV namespace to {{ mtv_migrate_migration_request.mtv_namespace }}"
+        
+    - name: Process Request (Baseline)
+      debug:
+        msg: "Processing baseline configuration for migration"
+        
+    - name: Process Request (Maps)
+      debug:
+        msg: "Setting up network map '{{ mtv_migrate_migration_request.network_map }}' and storage map '{{ mtv_migrate_migration_request.storage_map }}'"
+        
+    - name: Generate Plans
+      debug:
+        msg: "Starting plan generation process"
+        
+    - name: _plans | Set Plan Base Name
+      debug:
+        msg: "Setting plan base name to {{ mtv_migrate_migration_request.plan_name }}"
+        
+    - name: _plans | Retrieve Configured providers
+      debug:
+        msg: "Retrieving configured providers from MTV inventory"
+        
+    - name: _plans | Verify Source Provider
+      debug:
+        msg: "Verifying source provider '{{ mtv_migrate_migration_request.source }}' in namespace '{{ mtv_migrate_migration_request.source_namespace }}'"
+        
+    - name: _plans | Verify Destination Providers
+      debug:
+        msg: "Verifying destination provider '{{ mtv_migrate_migration_request.destination }}' in namespace '{{ mtv_migrate_migration_request.destination_namespace }}'"
+        
+    - name: _plans | Retrieve StorageMaps
+      debug:
+        msg: "Retrieving storage maps from Kubernetes"
+        
+    - name: _plans | Verify StorageMap
+      debug:
+        msg: "Verifying StorageMap '{{ mtv_migrate_migration_request.storage_map }}' in namespace '{{ mtv_migrate_migration_request.storage_map_namespace }}'"
+        
+    - name: _plans | Retrieve NetworkMap
+      debug:
+        msg: "Retrieving network maps from Kubernetes"
+        
+    - name: _plans | Verify NetworkMap
+      debug:
+        msg: "Verifying NetworkMap '{{ mtv_migrate_migration_request.network_map }}' in namespace '{{ mtv_migrate_migration_request.network_map_namespace }}'"
+        
+    - name: _plans | Process Plan Skeleton
+      debug:
+        msg: "Processing plan skeleton template"
+        
+    - name: _plans | Get Inventory vms
+      debug:
+        msg: "Retrieving VMs from MTV inventory"
+        
+    - name: _plans | Get Inventory folders
+      debug:
+        msg: "Retrieving folders from MTV inventory"
+        
+    - name: _process_folder | Initialize Folder Variables
+      debug:
+        msg: "Initializing folder variables for processing"
+        
+    - name: _process_folder | Verify Name or ID or Path specified for Folder
+      debug:
+        msg: "Verifying folder identification properties"
+        
+    - name: _process_folder | Locate Folder by name
+      debug:
+        msg: "Locating folder '/Datacenter/vm/Production' by name"
+        
+    - name: _process_folder | Verify single Folder found
+      debug:
+        msg: "Verifying that a single folder was found"
+        
+    - name: _process_folder | Set Folder to Process
+      debug:
+        msg: "Setting folder to process in migration"
+        
+    - name: _process_folder | Process Folder VM's
+      debug:
+        msg: "Processing VMs in folder '/Datacenter/vm/Production'"
+        
+    - name: _process_vm | Initialize VM Variables
+      debug:
+        msg: "Initializing VM variables for processing"
+      loop:
+        - vm-web-02
+        - vm-app-02
+        - vm-db-02
+      loop_control:
+        loop_var: vm_name
+        index_var: vm_idx
+        label: "VM {{ vm_name }}"
+        
+    - name: _process_vm | Verify Name or ID or Path specified for VM
+      debug:
+        msg: "Verifying VM identification properties"
+      loop:
+        - vm-web-02
+        - vm-app-02
+        - vm-db-02
+      loop_control:
+        loop_var: vm_name
+        index_var: vm_idx
+        label: "VM {{ vm_name }}"
+        
+    - name: _process_vm | Locate VM by name
+      debug:
+        msg: "Locating VM '{{ item }}' by name"
+      loop:
+        - vm-web-01
+        - vm-db-01
+        - vm-app-01
+      loop_control:
+        label: "VM {{ item }}"
+        
+    - name: _process_vm | Verify single VM found
+      debug:
+        msg: "Verifying that a single VM was found"
+      loop:
+        - vm-web-01
+        - vm-db-01
+        - vm-app-01
+      loop_control:
+        label: "VM {{ item }}"
+        
+    - name: _process_vm | Set VM to Process
+      debug:
+        msg: "Setting VM to process in migration"
+      loop:
+        - vm-web-01
+        - vm-db-01
+        - vm-app-01
+      loop_control:
+        label: "VM {{ item }}"
+        
+    - name: _process_vm | Add VM to Migration Dict
+      debug:
+        msg: "Adding VM '{{ item }}' to migration dictionary"
+      loop:
+        - vm-web-01
+        - vm-db-01
+        - vm-app-01
+      loop_control:
+        label: "VM {{ item }}"
+        
+    - name: _plans | Flatten VM's to Migrate
+      debug:
+        msg: "Flattening VMs to migrate into a list"
+        
+    - name: _plans | Verify Plan has VMs
+      debug:
+        msg: "Verifying that plan has VMs to migrate"
+        
+    - name: _process_plans | Set Plan Name
+      debug:
+        msg: "Setting plan name to {{ mtv_migrate_migration_request.plan_name }}"
+        
+    - name: _process_plans | Update Plan Content
+      debug:
+        msg: "Updating plan content with VM specifications"
+        
+    - name: _process_plans | Add Plan
+      debug:
+        msg: "Adding plan to list of plans"
+        
+    - name: _plans | Create Plans
+      debug:
+        msg: "Creating migration plan in Kubernetes"
+        
+    - name: _plans | Verify Plans Ready
+      debug:
+        msg: "Verifying plans are in a ready state"
+      register: fake_plan_result
+      
+    - name: _plans | Set Created Plans to Migrate
+      debug:
+        msg: "Setting created plans for migration"
+        
+    - name: Manage Migrations
+      debug:
+        msg: "Starting migration management process"
+        
+    - name: _migrations | Template Migrations
+      debug:
+        msg: "Templating migrations from plan"
+        
+    - name: _migrations | Create Migrations
+      debug:
+        msg: "Creating migration resources in Kubernetes"
+        
+    - name: _migrations | Wait for Migrations
+      debug:
+        msg: "Waiting for migrations to complete"
+        
+    - name: _migrations | Check on Migrations
+      debug:
+        msg: "Checking migration status - In Progress ({{ item }}%)"
+      loop:
+        - 10
+        - 25
+        - 50
+        - 75
+        - 90
+        - 100
+      loop_control:
+        label: "Progress: {{ item }}%"
+        pause: 3
+        
+    - name: Migration Complete
+      debug:
+        msg: |
+          Migration of VMs completed successfully:
+            - vm-web-01
+            - vm-db-01
+            - vm-app-01
+          
+          Plan Name: {{ mtv_migrate_migration_request.plan_name }}
+          Source: {{ mtv_migrate_migration_request.source }} ({{ mtv_migrate_migration_request.source_type }})
+          Destination: {{ mtv_migrate_migration_request.destination }} ({{ mtv_migrate_migration_request.destination_type }})
