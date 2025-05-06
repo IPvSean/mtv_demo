@@ -1,6 +1,6 @@
 ---
 - name: Simulated Windows Patching Workflow (Looks Real)
-  hosts: windows
+  hosts: all
   gather_facts: no
   vars:
     patch_security_only: true
