@@ -1,6 +1,6 @@
 ---
-- name: Simulated Windows Patching Workflow
-  hosts: all
+- name: Simulated Windows Patching Workflow (Looks Real)
+  hosts: windows
   gather_facts: no
   vars:
     patch_security_only: true
@@ -27,6 +27,10 @@
           - Update for Microsoft Visual C++ Redistributable (KB5003731)
           - Security Update for Microsoft Silverlight (KB5005460)
 
+    - name: Waiting for update scan to complete
+      pause:
+        seconds: 2
+
     - name: ⚙️ Applying updates
       debug:
         msg: >
@@ -37,15 +41,18 @@
           - Security Intelligence Update (KB5003342)
           - Servicing Stack Update (KB5003243)
 
+    - name: Installing updates...
+      pause:
+        seconds: 3
+
     - name: 🔄 Checking if reboot is required
       debug:
         msg: >
           Reboot required: {{ reboot_required }}
 
-    - name: 🔄 Rebooting system now (simulated)
-      debug:
-        msg: >
-          System is rebooting to complete patch installation... (Simulated reboot)
+    - name: Waiting for system to reboot
+      pause:
+        seconds: 2
 
     - name: 🔍 Validating post-patch service status
       debug:
@@ -53,6 +60,10 @@
           Running post-patch validation...
           Service {{ validation_service_name }} status: Running
           No issues detected.
+
+    - name: Running post-update checks
+      pause:
+        seconds: 1
 
     - name: 📝 Reporting patch summary
       debug:
