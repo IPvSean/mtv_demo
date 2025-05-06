@@ -1,0 +1,65 @@
+---
+- name: Simulated Windows Patching Workflow
+  hosts: all
+  gather_facts: no
+  vars:
+    patch_security_only: true
+    reboot_required: true
+    validation_service_name: "W32Time"
+
+  tasks:
+
+    - name: ✅ Checking for available updates
+      debug:
+        msg: >
+          Found 13 updates available:
+          - 2024-04 Cumulative Update for Windows Server 2019 (KB5001234)
+          - 2024-04 Security Update for .NET Framework 4.8 (KB5004321)
+          - Windows Malicious Software Removal Tool (KB890830)
+          - Definition Update for Windows Defender Antivirus (KB2267602)
+          - 2024-04 Security Update for Adobe Flash Player (KB5007789)
+          - 2024-04 Servicing Stack Update (KB5003243)
+          - 2024-04 Feature Update to Windows 10 Version 22H2 (KB5005463)
+          - Microsoft Edge Update (KB5005393)
+          - 2024-04 Quality Rollup for .NET Framework 3.5 and 4.8 (KB5006421)
+          - Cumulative Update for Windows Defender Antivirus Platform (KB4052623)
+          - 2024-04 Security Intelligence Update (KB5003342)
+          - Update for Microsoft Visual C++ Redistributable (KB5003731)
+          - Security Update for Microsoft Silverlight (KB5005460)
+
+    - name: ⚙️ Applying updates
+      debug:
+        msg: >
+          Applying updates based on patch_security_only={{ patch_security_only }}...
+          Updates applied:
+          - 2024-04 Cumulative Security Update (KB5001234)
+          - 2024-04 Security Update for .NET Framework (KB5004321)
+          - Security Intelligence Update (KB5003342)
+          - Servicing Stack Update (KB5003243)
+
+    - name: 🔄 Checking if reboot is required
+      debug:
+        msg: >
+          Reboot required: {{ reboot_required }}
+
+    - name: 🔄 Rebooting system now (simulated)
+      debug:
+        msg: >
+          System is rebooting to complete patch installation... (Simulated reboot)
+
+    - name: 🔍 Validating post-patch service status
+      debug:
+        msg: >
+          Running post-patch validation...
+          Service {{ validation_service_name }} status: Running
+          No issues detected.
+
+    - name: 📝 Reporting patch summary
+      debug:
+        msg: |
+          Patch Summary:
+          - Host: {{ inventory_hostname }}
+          - Security-only: {{ patch_security_only }}
+          - Updates Applied: 4
+          - Reboot Required: {{ reboot_required }}
+          - Post-patch Validation: Passed
