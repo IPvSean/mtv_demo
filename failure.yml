@@ -1,0 +1,11 @@
+--- 
+- hosts: all
+  gather_facts: true
+  tasks: 
+
+    - name: Print out something
+      ansible.builtin.debug:
+        msg: "Hello world! This is Sean"
+
+    - name: Fail something
+      ansible.builtin.fail:
