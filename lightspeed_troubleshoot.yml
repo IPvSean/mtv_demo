@@ -1,0 +1,46 @@
+---
+- name: System Health Check - Memory and Storage Monitoring
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+
+    - name: 🧠 Collect current memory usage
+      ansible.builtin.command: free -h
+      register: memory_info
+
+    - name: 📊 Memory usage report
+      ansible.builtin.debug:
+        msg: "{{ memory_info.stdout_lines }}"
+
+    - name: 💾 Collect mounted filesystem usage
+      ansible.builtin.command: df -h --output=source,fstype,size,used,avail,pcent,target
+      register: storage_info
+
+    - name: 📦 Filesystem usage report
+      ansible.builtin.debug:
+        msg: "{{ storage_info.stdout_lines }}"
+
+    ####################################################
+    # Simulated Warnings (Fake for Demo)
+    ####################################################
+
+    - name: 🔍 Evaluate storage thresholds
+      ansible.builtin.debug:
+        msg: "[{{ lookup('pipe', 'date +%Y-%m-%dT%H:%M:%S') }}] Evaluating storage thresholds on mounted filesystems..."
+
+    - name: ⚠️ Detected low disk space on /var
+      ansible.builtin.debug:
+        msg: |
+          [{{ lookup('pipe', 'date +%Y-%m-%dT%H:%M:%S') }}] WARNING: /var is below critical threshold.
+          Available: 182MB
+          Threshold: 200MB
+          Risk: Application logs may fail to write. Immediate cleanup or volume expansion recommended.
+
+    - name: 🚨 Root filesystem pressure alert
+      ansible.builtin.debug:
+        msg: |
+          [{{ lookup('pipe', 'date +%Y-%m-%dT%H:%M:%S') }}] ALERT: Root (/) partition usage at 96%.
+          Remaining space: 145MB
+          Risk: System operations may become unstable. Action recommended: archive old data or increase volume size.
