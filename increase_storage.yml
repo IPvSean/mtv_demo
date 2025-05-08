@@ -1,0 +1,68 @@
+---
+- name: OpenShift Virtualization - Increase RHEL VM Storage
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    cluster: "ocp-demo-cluster"
+    namespace: "rhel-vms"
+    vm_names:
+      - rhel03
+      - rhel04
+
+  tasks:
+
+    - name: 🔐 Authenticate to OpenShift cluster
+      ansible.builtin.debug:
+        msg: "[INFO] Logged in to {{ cluster }} as admin (token-based auth successful)."
+
+    - name: 📡 Verify OpenShift Virtualization APIs are available
+      ansible.builtin.debug:
+        msg: "[OK] kubevirt.io API group detected. All required CRDs present."
+
+    - name: 📂 Switching to namespace {{ namespace }}
+      ansible.builtin.debug:
+        msg: "[INFO] Switched to namespace '{{ namespace }}'."
+
+    - name: 🔍 Discovering RHEL virtual machines in {{ namespace }}
+      ansible.builtin.debug:
+        msg: |
+          [INFO] Found 2 matching VMs:
+          - rhel03 (status: Running)
+          - rhel04 (status: Running)
+
+    - name: 🧠 Inspect current disk size for rhel03
+      ansible.builtin.debug:
+        msg: "[INFO] rhel03 current root disk size: 40Gi (PVC: rhel03-rootdisk-pvc)"
+
+    - name: 🧠 Inspect current disk size for rhel04
+      ansible.builtin.debug:
+        msg: "[INFO] rhel04 current root disk size: 40Gi (PVC: rhel04-rootdisk-pvc)"
+
+    - name: 💾 Prepare volume expansion for rhel03
+      ansible.builtin.debug:
+        msg: "[ACTION] Resizing PVC 'rhel03-rootdisk-pvc' to 60Gi..."
+
+    - name: ✅ PVC expansion submitted for rhel03
+      ansible.builtin.debug:
+        msg: "[SUCCESS] Resize request accepted. Awaiting filesystem expansion inside VM..."
+
+    - name: 💾 Prepare volume expansion for rhel04
+      ansible.builtin.debug:
+        msg: "[ACTION] Resizing PVC 'rhel04-rootdisk-pvc' to 60Gi..."
+
+    - name: ✅ PVC expansion submitted for rhel04
+      ansible.builtin.debug:
+        msg: "[SUCCESS] Resize request accepted. Awaiting filesystem expansion inside VM..."
+
+    - name: 📈 Monitoring PVC expansion status (simulated delay)
+      ansible.builtin.debug:
+        msg: "[INFO] PVCs in 'Resizing' state... Monitoring until bound and complete."
+
+    - name: 🎉 Storage expansion complete for all RHEL VMs
+      ansible.builtin.debug:
+        msg: |
+          [OK] Final disk sizes:
+          - rhel03: 60Gi
+          - rhel04: 60Gi
+          All volumes are bound and ready. Expansion successful.
