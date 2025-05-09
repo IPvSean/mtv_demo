@@ -1,0 +1,10 @@
+---
+- name: deploy virtual machines
+  gather_facts: false
+  hosts: all
+  gather_facts: false
+
+  tasks: 
+    - name: No bueno 
+      ansible.builtin.debug:
+        msg: "Deploy the virtual machines"
